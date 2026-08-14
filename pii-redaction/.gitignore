@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+/tmp/
+
+# Word lock files
+~$*
+.DS_Store
+
+# ---------------------------------------------------------------------------
+# Audit artefacts are a COMPLETE REVERSAL KEY for the redacted document:
+# mapping.json is surrogate -> original for every value, and detections.csv
+# lists every span with its original text.  Committing them next to the
+# deliverable undoes the redaction for anyone who clones the repository.
+# They are produced on demand by --mapping / --detections and must be handled
+# like the source document, not like output.
+# ---------------------------------------------------------------------------
+output/mapping.json
+output/detections.csv
+examples/*-mapping.json
+examples/*-detections.csv

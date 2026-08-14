@@ -1,0 +1,23 @@
+# --- core redaction library -------------------------------------------------
+python-docx==1.2.0
+Faker==40.36.0
+spacy==3.8.13
+click>=8.0                    # required by spacy's CLI layer; not always pulled in
+
+# The NER model is pinned here rather than installed by a separate command so a
+# host with no build step (Hugging Face Spaces) gets it from requirements alone.
+# Swap en_core_web_lg for en_core_web_sm to save ~430 MB at a real cost in recall.
+en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl
+
+# --- image redaction (optional but on by default; --no-ocr skips the stage) ---
+Pillow==12.3.0                # decode/re-encode embedded pictures
+rapidocr-onnxruntime==1.2.3   # OCR; pip-only, no system binary needed
+qrcode==8.2                   # regenerate QR codes pointing at surrogate URLs
+# opencv-python and numpy arrive with rapidocr and provide face/QR/ink analysis
+
+# --- web front end ----------------------------------------------------------
+# Ranges rather than pins: the Hugging Face Gradio runtime installs its own
+# FastAPI/Starlette, and exact pins here would make the resolver fail.
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9

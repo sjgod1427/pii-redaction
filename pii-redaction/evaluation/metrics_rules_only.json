@@ -1,0 +1,156 @@
+{
+  "sample": {
+    "blocks": 110,
+    "gold_entities": 46,
+    "characters": 18165
+  },
+  "overall": {
+    "tp": 42,
+    "fp": 2,
+    "fn": 4,
+    "precision": 0.9545,
+    "recall": 0.913,
+    "f1": 0.9333
+  },
+  "overall_exact_boundary": {
+    "tp": 36,
+    "fp": 8,
+    "fn": 10,
+    "precision": 0.8182,
+    "recall": 0.7826,
+    "f1": 0.8
+  },
+  "overall_type_insensitive": {
+    "tp": 44,
+    "fp": 0,
+    "fn": 2,
+    "precision": 1.0,
+    "recall": 0.9565,
+    "f1": 0.9778
+  },
+  "token_accuracy": 0.9955,
+  "per_type": {
+    "ADDRESS": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "EMAIL": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "LOCATION": {
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    "NATIONAL_ID": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "ORG": {
+      "tp": 14,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9333,
+      "f1": 0.9655
+    },
+    "PERSON": {
+      "tp": 16,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.8421,
+      "f1": 0.9143
+    },
+    "PHONE": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "URL": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "false_negatives": [
+    {
+      "block": 239,
+      "type": "PERSON",
+      "text": "Sangeeta Branch"
+    },
+    {
+      "block": 2982,
+      "type": "PERSON",
+      "text": "Ganesh Prasad"
+    }
+  ],
+  "false_positives": [],
+  "document_leakage": {
+    "values_checked": 367,
+    "values_still_present": 0,
+    "residual_rate": 0.0,
+    "examples": []
+  },
+  "image_leakage": {
+    "images_checked": 8,
+    "values_still_present": 0,
+    "examples": [],
+    "recovered_text": [
+      {
+        "image": "word/media/image1.jpeg",
+        "text": "https://arnoldhughes.example.com/tfC6dQ2xWg"
+      },
+      {
+        "image": "word/media/image1.png",
+        "text": "MERIDIANHOLDINGS"
+      },
+      {
+        "image": "word/media/image2.jpeg",
+        "text": "REDACTED"
+      },
+      {
+        "image": "word/media/image2.png",
+        "text": "REDACTED"
+      },
+      {
+        "image": "word/media/image3.jpeg",
+        "text": "REDACTED"
+      },
+      {
+        "image": "word/media/image3.png",
+        "text": "PM"
+      },
+      {
+        "image": "word/media/image4.png",
+        "text": "REDACTED - IDENTITY DOCUMENT"
+      },
+      {
+        "image": "word/media/image5.png",
+        "text": "REDACTED - IDENTITY DOCUMENT"
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "_comment": [
+    "Anchors that would re-identify the subject of the Red Herring Prospectus.",
+    "Chosen by reading the SOURCE document and asking 'what would I search for",
+    "to work out who this is?' — deliberately not derived from the tool's own",
+    "output, so the tool cannot score itself on its own opinion of what it found.",
+    "Replace this file wholesale when auditing a different document."
+  ],
+  "CRITICAL": {
+    "issuer domain": ["kshinternational"],
+    "issuer name / trademark": ["KSH", "KSH International"],
+    "CIN and its fragments": ["U28129PN1979PLC141032", "141032", "U28129"],
+    "corporate office postal code": ["411 045", "411045"],
+    "registered office postal code": ["410 501", "410501"],
+    "manufacturing footprint": [
+      "Chakan", "Supa", "Taloja", "Ahmednagar", "Ahilyanagar",
+      "Birdewadi", "Khalumbre", "Raigad", "Khed"
+    ]
+  },
+  "HIGH": {
+    "promoter family": ["Hegde", "Kushal", "Rakhi", "Shetty", "Girija"],
+    "named individuals": [
+      "Rupal", "Sancheti", "Sarvaiya", "Lalit Muljibhai",
+      "Narayna", "Gopal BO", "Malvadkar", "Bhandary"
+    ],
+    "advisers and intermediaries": [
+      "Nuvama", "ICICI Securities", "Kirtane", "Pandit", "MUFG", "Link Intime"
+    ],
+    "issuer city": ["Pune"],
+    "real street / locality": [
+      "Appasaheb Marathe", "Bandra Kurla", "Bandra East", "Prabhadevi",
+      "Pallod Farms", "Baner", "Pushpakamal"
+    ]
+  },
+  "MEDIUM": {
+    "identifiers": ["00135070", "hdfcbank.com", "AAACK", "M-140388"],
+    "trusts": [
+      "Dhaulagiri", "Everest Family Trust", "Makalu", "Annapurna", "Kanchenjunga"
+    ]
+  }
+}

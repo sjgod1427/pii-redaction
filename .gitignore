@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------
+# SOURCE DOCUMENTS ARE NEVER COMMITTED.
+#
+# The Red Herring Prospectus embeds photographs of a real PAN card and a real
+# Aadhaar card — names, parents' names, dates of birth, national identifiers,
+# faces and a signature.  Publishing the input to a public repository would
+# disclose all of it, which is the exact harm this tool exists to prevent.
+#
+# The *redacted* output is committed, because it has been verified to leak
+# nothing: see evaluation/EVALUATION_REPORT.md §3 and §3.1.
+# ---------------------------------------------------------------------------
+*.docx
+!pii-redaction/output/*-REDACTED.docx
+!pii-redaction/output/* - REDACTED.docx
+!pii-redaction/examples/*.docx
+
+# The assignment brief is the task-setter's document, not part of the solution.
+Enterprise Data - Assignment.pdf
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+~$*
+
+# Local environment
+.venv/
+__pycache__/
+*.pyc
+
+# git-lfs writes hooks to a literal dev/null path on Windows
+dev/

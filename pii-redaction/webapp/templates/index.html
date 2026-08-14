@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PII Redactor — replace every identifier with a consistent fake</title>
+<meta name="description" content="Redact names, contacts, identifiers, addresses, places and embedded ID scans from a .docx — replacing each with a consistent fake alternative.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="masthead">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="26" height="26">
+        <path d="M16 2.5 27 7v9.2c0 6.6-4.5 11.7-11 13.3-6.5-1.6-11-6.7-11-13.3V7z"
+              fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/>
+        <path class="tick" d="M10.6 16.2l3.8 3.8 7-7.4" fill="none" stroke="currentColor"
+              stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>PII&nbsp;Redactor</h1>
+      <p>Consistent fake alternatives — text <em>and</em> embedded images</p>
+    </div>
+  </div>
+  <nav class="masthead-links">
+    <a href="https://github.com/sjgod1427/pii-redaction" target="_blank" rel="noopener">Source</a>
+    <button type="button" class="ghost" id="theme-toggle" aria-label="Toggle colour theme">◑</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ─────────────────────────  HERO  ───────────────────────── -->
+  <section class="hero">
+    <h2 class="headline">
+      <span class="line"><span>Every name, number and</span></span>
+      <span class="line"><span>scanned ID card — replaced,</span></span>
+      <span class="line"><span>and <em>consistently</em> so.</span></span>
+    </h2>
+    <p class="sub">
+      A hybrid of validator-backed patterns, a document-level gazetteer and spaCy NER.
+      The same person becomes the same fake person on page 1 and page 300 — and the
+      Aadhaar card buried in an image gets replaced too.
+    </p>
+    <ul class="stat-strip" id="stat-strip">
+      <li><b data-count="18">0</b><span>PII types (13 text + 5 image)</span></li>
+      <li><b data-count="1.0" data-decimals="3">0</b><span>type-insensitive P/R</span></li>
+      <li><b data-count="99.69" data-decimals="2" data-suffix="%">0</b><span>token accuracy</span></li>
+      <li><b data-count="0">0</b><span>values leaked</span></li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────  UPLOAD / RESULT SLOT  ───────────────────────── -->
+  <section class="panel drop-panel" id="drop-panel">
+
+    <!-- state A: choose a document -->
+    <div id="pick-state">
+      <form id="upload-form">
+        <label class="dropzone" id="dropzone" tabindex="0">
+          <input type="file" id="file-input" accept=".docx" hidden>
+          <div class="dz-glow" aria-hidden="true"></div>
+          <div class="dz-inner">
+            <div class="dz-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="46" height="46">
+                <path d="M28 5H13a3 3 0 0 0-3 3v32a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3V15z"
+                      fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M28 5v10h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+                <path class="arrow" d="M24 33V21m0 0-5 5m5-5 5 5" fill="none" stroke="currentColor"
+                      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="dz-title">Drop a <b>.docx</b> here</p>
+            <p class="dz-hint">or click to choose &nbsp;·&nbsp; max 25&nbsp;MB</p>
+            <div class="dz-actions">
+              <button type="button" class="btn primary" id="choose-btn">Choose file</button>
+              <button type="button" class="btn" id="sample-btn">Browse sample library</button>
+            </div>
+          </div>
+        </label>
+      </form>
+      <p class="privacy">
+        <span class="dot" aria-hidden="true"></span>
+        Your file is processed in memory, never logged, and deleted within 15 minutes.
+        Nothing is stored between restarts.
+      </p>
+
+    </div>
+
+    <!-- state B: finished, offer the download right here -->
+    <div id="done-state" hidden>
+      <button type="button" class="reset-x" id="reset-btn" aria-label="Start over">✕</button>
+      <div class="done-inner">
+        <div class="shield done-shield" id="done-shield" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="46" height="46">
+            <path class="shield-body" d="M32 4 56 13v18.6C56 45 46.4 55.6 32 60 17.6 55.6 8 45 8 31.6V13z"
+                  fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round"/>
+            <path class="shield-tick" d="M21 32.5l7.6 7.6L44 24" fill="none" stroke="currentColor"
+                  stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 id="done-title">Redacted</h3>
+        <p id="done-text">No redacted value survives anywhere in the output.</p>
+        <div class="done-actions">
+          <a class="btn primary" id="dl-doc" href="#" download>Download redacted .docx</a>
+          <button type="button" class="btn ghost" id="toggle-keys">Audit files…</button>
+          <button type="button" class="btn ghost" id="preview-btn">Preview before / after</button>
+        </div>
+        <div class="keys-inline" id="keys-panel" hidden>
+          <p class="warn">
+            <b>These two files are a complete reversal key.</b> <code>mapping.json</code> maps every
+            surrogate back to the original and <code>detections.csv</code> lists every span found.
+            Never ship them alongside the redacted document.
+          </p>
+          <div class="keys-actions">
+            <a class="btn" id="dl-map" href="#" download>mapping.json</a>
+            <a class="btn" id="dl-det" href="#" download>detections.csv</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────  PROGRESS  ───────────────────────── -->
+  <section class="panel run-panel" id="run-panel" hidden>
+    <div class="run-head">
+      <h3 id="run-name">document.docx</h3>
+      <span class="run-elapsed" id="run-elapsed">0.0s</span>
+    </div>
+    <ol class="stages" id="stages"></ol>
+    <p class="run-note" id="run-note">On free CPU a large document takes about 60–90 seconds.</p>
+  </section>
+
+  <!-- ─────────────────────────  RESULTS  ───────────────────────── -->
+  <section id="results" hidden>
+
+    <div class="counters" id="counters"></div>
+
+
+    <div class="panel" id="images-panel" hidden>
+      <div class="panel-head">
+        <h3>Embedded images</h3>
+        <p>Text scanning cannot see a scanned ID card. Each picture is classified by the
+           <em>same</em> detectors that read the paragraphs — drag the handle to compare.</p>
+      </div>
+      <div class="image-grid" id="image-grid"></div>
+    </div>
+
+    <div class="panel" id="diff-panel" hidden>
+      <div class="panel-head">
+        <h3>What changed</h3>
+        <p>A sample of substitutions. The same original always maps to the same surrogate.</p>
+      </div>
+      <div class="diff-list" id="diff-list"></div>
+    </div>
+
+  </section>
+
+  <!-- ─────────────────────────  HOW  ───────────────────────── -->
+  <section class="panel how">
+    <div class="panel-head"><h3>How it decides</h3></div>
+    <ol class="how-steps">
+      <li>
+        <span class="num">1</span>
+        <div><b>Validator-backed patterns</b>
+        <p>Emails, phones, cards (Luhn), IPs (octet-checked), PAN, CIN, GSTIN, Aadhaar, IFSC, DOB, addresses. A 16-digit number is only a card if it passes Luhn.</p></div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div><b>A document-level gazetteer</b>
+        <p>Pass 1 reads the whole file and learns who and what it talks about. Pass 2 matches that lexicon everywhere — so a name recognised once, in one good context, is redacted on every page.</p></div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div><b>spaCy NER, filtered</b>
+        <p>Used only as a candidate generator. Raw model output never reaches the document — it passes through the same document-derived filters, including a check that counts which words appear in lower case in ordinary prose.</p></div>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <div><b>Places, and pictures</b>
+        <p>Localities are harvested from the document's own addresses, then redacted in narrative prose — a set of plant towns identifies a company as surely as its letterhead. Images are OCR'd, face- and barcode-checked, and replaced whole.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>Deterministic: same input and seed produce byte-identical output.
+       Built for the Scaler AI Labs assignment.</p>
+  </footer>
+</main>
+
+<!-- ─────────────────────────  DIALOGS  ───────────────────────── -->
+
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- library -->
+<div class="modal" id="modal-library" role="dialog" aria-modal="true" aria-labelledby="lib-title" hidden>
+  <div class="modal-head">
+    <div>
+      <h3 id="lib-title">Sample library</h3>
+      <p>Pick a document to preview it. Nothing is redacted until you ask.</p>
+    </div>
+    <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="library-grid" id="library-grid"><p class="empty">Loading…</p></div>
+  </div>
+</div>
+
+<!-- single-document preview, before running -->
+<div class="modal wide" id="modal-doc" role="dialog" aria-modal="true" aria-labelledby="doc-title" hidden>
+  <div class="modal-head">
+    <div>
+      <h3 id="doc-title">Document</h3>
+      <p id="doc-sub">Original, exactly as it will be read.</p>
+    </div>
+    <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="doc-col standalone" id="doc-single">
+      <div class="doc-body"><p class="doc-more">Loading…</p></div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button type="button" class="btn" id="doc-back">← Library</button>
+    <button type="button" class="btn primary" id="doc-redact">Redact this document</button>
+  </div>
+</div>
+
+<!-- before / after, after running -->
+<div class="modal wide" id="modal-diff" role="dialog" aria-modal="true" aria-labelledby="diff-title" hidden>
+  <div class="modal-head">
+    <div>
+      <h3 id="diff-title">Before &amp; after</h3>
+      <p>The same document either side. Scroll one — the other follows.</p>
+    </div>
+    <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="preview-toggle">
+      <button type="button" class="seg active" data-view="split">Side by side</button>
+      <button type="button" class="seg" data-view="source">Original only</button>
+      <button type="button" class="seg" data-view="redacted">Redacted only</button>
+    </div>
+    <div class="preview-wrap" id="preview-wrap" data-view="split">
+      <div class="doc-col" id="doc-source">
+        <div class="doc-label">Original</div>
+        <div class="doc-body"></div>
+      </div>
+      <div class="doc-col" id="doc-redacted">
+        <div class="doc-label good">Redacted</div>
+        <div class="doc-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

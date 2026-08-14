@@ -1,0 +1,27 @@
+# Slim dependency set for a 512 MB free instance (see render.yaml).
+#
+# Two things are deliberately absent compared with requirements.txt:
+#
+#   * en_core_web_lg -> en_core_web_sm.  The large model is 445 MB on disk and
+#     more once loaded; the small one fits.  Text recall drops from 0.957 to
+#     roughly the rules-only figure (0.913).
+#   * rapidocr-onnxruntime / opencv.  The ONNX runtime and its models do not fit
+#     alongside spaCy in 512 MB.  images.py degrades to "replace every picture
+#     unexamined", which is the fail-safe direction: pictures are still redacted,
+#     they are simply no longer classified as ID card / signature / logo / code.
+#
+# Deploy with the Dockerfile and requirements.txt on any host with ~2 GB of RAM
+# to get the full-quality pipeline described in the README.
+
+python-docx==1.2.0
+Faker==40.36.0
+spacy==3.8.13
+click>=8.0
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+
+Pillow==12.3.0
+qrcode==8.2
+
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9

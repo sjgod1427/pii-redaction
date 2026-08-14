@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.git/
+.gitignore
+tmp/
+output/
+tests/
+docs/
+
+# Library documents ship; audit artefacts never do.
+*.docx
+!examples/*.docx
+webapp/showcase.json
+**/mapping.json
+**/detections.csv
+~$*
+.DS_Store

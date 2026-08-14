@@ -1,0 +1,29 @@
+# Render blueprint — free tier deployment.
+#
+# The free instance has 512 MB of RAM, which en_core_web_lg (445 MB on disk,
+# more once loaded) plus the ONNX OCR runtime would blow through immediately.
+# So this deployment uses the small spaCy model and omits the OCR stack.
+#
+# Losing OCR does not make the output unsafe: with no analysis engine present
+# images.py classifies every picture as IMAGE_UNCLASSIFIED and replaces it
+# unexamined — the fail-safe direction. Pictures are still redacted, they are
+# simply no longer labelled as ID card / signature / logo / code. Text recall
+# drops from 0.957 to roughly the rules-only ablation (0.913), because the
+# smaller model finds fewer people.
+#
+# For full-quality deployment use the Dockerfile on a host with ~2 GB of RAM.
+
+services:
+  - type: web
+    name: pii-redactor
+    runtime: python
+    plan: free
+    rootDir: pii-redaction
+    buildCommand: pip install -r requirements-render.txt && python examples/make_samples.py
+    startCommand: uvicorn webapp.app:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 75
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: PII_SPACY_MODEL
+        value: en_core_web_sm
+    healthCheckPath: /api/health
